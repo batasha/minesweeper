@@ -34,6 +34,23 @@ class Board
       find_nearby_mines(board[guess_x][guess_y])
     end
 
+    def won?
+      over = true
+
+      board.each do |row|
+        row.each do |tile|
+          if tile.revealed == false || (tile.has_mine == false && tile.player_flag == true)
+            over = false
+          end
+        end
+      end
+
+    end
+
+    def over(guessed_tile)
+      guessed_tile.has_mine || won?
+    end
+
 end
 
 class Tile
