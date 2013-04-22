@@ -46,7 +46,12 @@ class Game
 
     self.board[guess_x][guess_y].revealed = true
 
-    find_nearby_mines(self.board[guess_x][guess_y])
+    if guess.has_mine
+      self.lost
+    else
+      find_nearby_mines(self.board[guess_x][guess_y])
+    end
+
   end
 
   def won?
@@ -62,8 +67,26 @@ class Game
 
   end
 
-  def over(guessed_tile)
-    guessed_tile.has_mine || won?
+  # def lost?(guessed_tile)
+ #    guessed_tile.has_mine
+ #  end
+ #
+
+  # def over?
+  #   lost? || won?
+  # end
+
+
+  def run
+    self.set_board
+
+    until won? || lost?
+      self.display_board
+
+      player.get_input
+      # reveal tile
+
+    end
   end
 
 end
@@ -86,6 +109,18 @@ end
 
 
 class Player
+  def get_input
+    print "Reveal or flag? (Type 'r' or 'f'): "
+    option = gets.chomp
+    print "Enter x coordinate: "
+    x = gets.chomp.to_i
+    print "Enter y coordinate: "
+    y = gets.chomp.to_i
 
+  end
+
+  def flag_tile
+
+  end
 
 end
