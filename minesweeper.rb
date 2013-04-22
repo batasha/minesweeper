@@ -19,17 +19,35 @@ class Board
 
       board[x][y].has_mine = true
     end
+
+    def find_nearby_mines(input_tile)
+
+    end
+
+
+    def reveal_tile(guess)
+      guess_x = guess[0]
+      guess_y = guess[1]
+
+      board[guess_x][guess_y].revealed = true
+
+      find_nearby_mines(board[guess_x][guess_y])
+    end
+
 end
 
 class Tile
 
-  attr_accessor :has_mine, :player_flag, :display_value
+  attr_accessor :has_mine, :player_flag, :display_value, :revealed
 
   def initialize
     @has_mine = false
     @player_flag = false
     @display_value = "*"
+    @revealed = false
   end
+
+
 
 
 end
