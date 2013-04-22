@@ -1,13 +1,17 @@
-class Board
+class Game
+
+  attr_reader :mine_count, :board
 
   def initialize(size = 9, mine_count = 10)
-    board = Array.new(size, Tile.new) {Array.new(size, Tile.new)}
-    mine_count = 10
+    @board = Array.new(size) do
+      Array.new(size) {Tile.new}
+    end
+    @mine_count = mine_count
   end
 
   def set_board
     mine_locations = []
-    while mine_locations.size <= mine_count
+    while mine_locations.size <= self.mine_count
       mine_locations << rand(81)
       mine_locations = mine_locations.uniq
     end
@@ -17,8 +21,18 @@ class Board
       x = loc / 9
       y = loc % 9
 
-      board[x][y].has_mine = true
+      self.board[x][y].has_mine = true
+      p self.board[x][y]
     end
+
+    self.board.each do |x|
+      x.each do |y|
+        print "#{y.has_mine} "
+      end
+      print "\n"
+    end
+
+  end
 
     def find_nearby_mines(input_tile)
 
@@ -29,15 +43,15 @@ class Board
       guess_x = guess[0]
       guess_y = guess[1]
 
-      board[guess_x][guess_y].revealed = true
+      self.board[guess_x][guess_y].revealed = true
 
-      find_nearby_mines(board[guess_x][guess_y])
+      find_nearby_mines(self.board[guess_x][guess_y])
     end
 
     def won?
       over = true
 
-      board.each do |row|
+      self.board.each do |row|
         row.each do |tile|
           if tile.revealed == false || (tile.has_mine == false && tile.player_flag == true)
             over = false
