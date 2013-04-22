@@ -12,17 +12,25 @@ class Board
       mine_locations = mine_locations.uniq
     end
 
-    board[mine_loc / 9][mine]
+    # Sets locations of mines on the board.
+    mine_locations.each do |loc|
+      x = loc / 9
+      y = loc % 9
+
+      board[x][y].has_mine = true
+    end
 end
 
 class Tile
 
-  attr_accessor :has_mine, :player_flag
+  attr_accessor :has_mine, :player_flag, :display_value
 
   def initialize
     @has_mine = false
     @player_flag = false
+    @display_value = "*"
   end
+
 
 end
 
