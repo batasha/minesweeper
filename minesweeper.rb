@@ -36,9 +36,28 @@ class Game
 
   end
 
-  def find_nearby_mines(input_tile)
+  def find_nearby_mines(location)
+    x = location[0]
+    y = location[1]
+
+    #base case
+    #if any adjacent tiles has a mine, set has nearby mines to true
+    #else set display value to "_"
+
+    #recursive case
+    #if adjacent tile has no nearby mines,
+    #find_nearby_mines on adjacent tile
+
   end
 
+  def flag_tile(guess)
+    guess_x = guess[0]
+    guess_y = guess[1]
+
+    self.board[guess_x][guess_y].player_flag = true
+    self.board[guess_x][guess_y].display_value = 'F'
+
+  end
 
   def reveal_tile(guess)
     guess_x = guess[0]
@@ -83,8 +102,16 @@ class Game
     until won? || lost?
       self.display_board
 
-      player.get_input
-      # reveal tile
+      option = player.get_option
+      location = player.get_location
+
+      if option == 'f'
+        flag_tile(location)
+      elsif option == 'r'
+        reveal_tile(location)
+      else
+        puts 'Invalid input.'
+      end
 
     end
   end
@@ -109,18 +136,20 @@ end
 
 
 class Player
-  def get_input
+
+  def get_option
     print "Reveal or flag? (Type 'r' or 'f'): "
-    option = gets.chomp
+    gets.chomp
+  end
+
+  def get_location
     print "Enter x coordinate: "
     x = gets.chomp.to_i
     print "Enter y coordinate: "
     y = gets.chomp.to_i
 
+    [x, y]
   end
 
-  def flag_tile
-
-  end
 
 end
