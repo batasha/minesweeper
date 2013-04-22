@@ -38,60 +38,33 @@ class Game
   def find_nearby_mines(location)
     x = location[0]
     y = location[1]
-    nearby_bombs = 0
-    #base case
-    #if any adjacent tiles has a mine, set has nearby mines to true
-    #else set display value to "_"
-
-    # if board[x][y + 1].has_mine
-#       board[x][y].display_value += 1
-#     else
-#       board[x][y].display_value = "_"
-#       find_nearby_mines([x, y + 1])
-
-#     elsif board[x + 1][y + 1].has_mine
-#
-#     elsif board[x + 1][y].has_mine
-#
-#     elsif board[x + 1][y - 1].has_mine
-#
-#     elsif board[x + 1][y + 1].has_mine
-#
-#     elsif board[x][y - 1].has_mine
-#
-#     elsif board[x - 1][y - 1].has_mine
-#
-#     elsif board[x - 1][y].has_mine
-#
-#     elsif board[x - 1][y + 1].has_mine
 
     (x - 1..x + 1).each do |i|
       (y - 1..y + 1). each do |j|
-        return if !(0..9).include?(i) || (i == x && j == y) || board[i][j].nil?
+        return if board[i][j].display_value != '*' || !(0..9).include?(i) || (i == x && j == y) || board[i][j].nil?
 
         if board[i][j].has_mine
           board[x][y].nearby_bombs += 1
+          board[x][y].checked = true
           return
         else
           board[x][y].display_value = "_"
+          board[x][y].checked = true
           find_nearby_mines([i, j])
         end
 
         if board[x][y].nearby_bombs > 0
           board[x][y].display_value = board[x][y].nearby_bombs.to_s
+        end
 
       end
     end
-      # while y < self.board.size && y > 0
 
-    #
-    # else
-    #   board[x][y].display_value = "_"
-    # end
-
-    #recursive case
-    #if adjacent tile has no nearby mines,
-    #find_nearby_mines on adjacent tile
+    board.each do |row|
+      row.each do |tile|
+        tile.checked = false
+      end
+    end
 
   end
 
@@ -111,7 +84,7 @@ class Game
     self.board[guess_x][guess_y].revealed = true
 
     if self.board[guess_x][guess_y].has_mine
-      self.lost
+      puts "You lose."
     else
       find_nearby_mines(guess)
     end
@@ -165,7 +138,7 @@ end
 
 class Tile
 
-  attr_accessor :has_mine, :player_flag, :display_value, :revealed, :nearby_bombs
+  attr_accessor :has_mine, :player_flag, :display_value, :revealed, :nearby_bombs, :checked
 
   def initialize
     @has_mine = false
@@ -173,6 +146,7 @@ class Tile
     @display_value = "*"
     @revealed = false
     @nearby_bombs = 0
+    @checked = false
   end
 
 
