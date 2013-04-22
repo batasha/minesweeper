@@ -22,48 +22,49 @@ class Game
       y = loc % 9
 
       self.board[x][y].has_mine = true
-      p self.board[x][y]
     end
+  end
 
+  def display_board
     self.board.each do |x|
       x.each do |y|
-        print "#{y.has_mine} "
+        print "#{y.display_value} "
       end
       print "\n"
+    end
+  end
+
+  end
+
+  def find_nearby_mines(input_tile)
+  end
+
+
+  def reveal_tile(guess)
+    guess_x = guess[0]
+    guess_y = guess[1]
+
+    self.board[guess_x][guess_y].revealed = true
+
+    find_nearby_mines(self.board[guess_x][guess_y])
+  end
+
+  def won?
+    over = true
+
+    self.board.each do |row|
+      row.each do |tile|
+        if tile.revealed == false || (tile.has_mine == false && tile.player_flag == true)
+          over = false
+        end
+      end
     end
 
   end
 
-    def find_nearby_mines(input_tile)
-
-    end
-
-
-    def reveal_tile(guess)
-      guess_x = guess[0]
-      guess_y = guess[1]
-
-      self.board[guess_x][guess_y].revealed = true
-
-      find_nearby_mines(self.board[guess_x][guess_y])
-    end
-
-    def won?
-      over = true
-
-      self.board.each do |row|
-        row.each do |tile|
-          if tile.revealed == false || (tile.has_mine == false && tile.player_flag == true)
-            over = false
-          end
-        end
-      end
-
-    end
-
-    def over(guessed_tile)
-      guessed_tile.has_mine || won?
-    end
+  def over(guessed_tile)
+    guessed_tile.has_mine || won?
+  end
 
 end
 
