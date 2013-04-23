@@ -10,24 +10,14 @@ class Game
   end
 
   def set_board
-    mine_locations = []
-    while mine_locations.size <= self.mine_count
-      mine_locations << rand(81)
-      mine_locations = mine_locations.uniq
-    end
-
-    # Sets locations of mines on the board.
-    mine_locations.each do |loc|
-      x = loc / 9
-      y = loc % 9
-
-      self.board[x][y].has_mine = true
-    end
+    mine_locations = @board.flatten.sample(@mine_count)
+    mine_locations.each {|tile| tile.has_mine = true}
   end
 
   def display_board
     self.board.each do |x|
       x.each do |y|
+        y.update_display
         print "#{y.display_value} "
       end
       print "\n"
@@ -44,7 +34,7 @@ class Game
       (y - 1..y + 1). each do |j|
         return if board[i][j].display_value != '*' || !(0..9).include?(i) || (i == x && j == y) || board[i][j].nil?
 
-        if board[i][j].has_mine
+        if board[i][j].has_mine && 
           board[x][y].nearby_bombs += 1
           board[x][y].checked = true
           return
@@ -150,7 +140,7 @@ class Tile
   end
 
   def update_display
-    @display_value = 'F'
+    @display_value = 'F' if @player_flag
     @display_value = '_' if @revealed
     @display_value = @nearby_bombs if @nearby_bombs > 0
   end
