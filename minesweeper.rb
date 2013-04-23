@@ -1,3 +1,5 @@
+require 'yaml'
+
 class Game
 
   attr_reader :mine_count, :board
@@ -6,12 +8,36 @@ class Game
     @board = Array.new(size) do
       Array.new(size) {Tile.new}
     end
+
+    board.each_with_index do |row, x|
+      row.each_with_index do |tile, y|
+        tile.x = x
+        tile.y = y
+      end
+    end
+
     @mine_count = mine_count
   end
 
   def set_board
     mine_locations = @board.flatten.sample(@mine_count)
-    mine_locations.each {|tile| tile.has_mine = true}
+    mine_locations.each do |tile| 
+      tile.has_mine = true
+    end
+
+    @board.each_with_index do |row, x|
+      row.each_with_index do |tile, y|
+        if tile.has_mine
+          (x - 1..x + 1).each do |i|
+            next if !(0..8).include?(i)
+            (y - 1..y + 1). each do |j|
+              next if !(0..8).include?(j) || @board[i][j].nil? || (i == x && j == y)
+              @board[i][j].nearby_bombs += 1
+            end
+          end
+        end
+      end
+    end
   end
 
   def display_board
@@ -31,12 +57,13 @@ class Game
     y = location[1]
 
     (x - 1..x + 1).each do |i|
+      next if !(0..8).include?(i)
       (y - 1..y + 1). each do |j|
-        return if board[i][j].display_value != '*' || !(0..9).include?(i) || (i == x && j == y) || board[i][j].nil?
+        next if !(0..8).include?(j)
+        return if board[i][j].revealed || (i == x && j == y) || board[i][j].nil?
 
-        if board[i][j].has_mine && 
-          board[x][y].nearby_bombs += 1
-          board[x][y].checked = true
+        if board[i][j].has_mine
+          board[x][y].revealed = true
           return
         else
           board[x][y].display_value = "_"
@@ -128,7 +155,7 @@ end
 
 class Tile
 
-  attr_accessor :has_mine, :player_flag, :display_value, :revealed, :nearby_bombs
+  attr_accessor :has_mine, :player_flag, :display_value, :revealed, :nearby_bombs, :x, :y
 
   def initialize
     @has_mine = false
@@ -142,7 +169,7 @@ class Tile
   def update_display
     @display_value = 'F' if @player_flag
     @display_value = '_' if @revealed
-    @display_value = @nearby_bombs if @nearby_bombs > 0
+    @display_value = @nearby_bombs if @nearby_bombs > 0 &&@revealed
   end
 
 
