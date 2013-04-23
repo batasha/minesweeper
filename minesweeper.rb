@@ -32,6 +32,7 @@ class Game
       end
       print "\n"
     end
+    true
   end
 
 
@@ -65,7 +66,6 @@ class Game
         tile.checked = false
       end
     end
-
   end
 
   def flag_tile(guess)
@@ -138,18 +138,22 @@ end
 
 class Tile
 
-  attr_accessor :has_mine, :player_flag, :display_value, :revealed, :nearby_bombs, :checked
+  attr_accessor :has_mine, :player_flag, :display_value, :revealed, :nearby_bombs
 
   def initialize
     @has_mine = false
     @player_flag = false
-    @display_value = "*"
+    @display_value = '*'
     @revealed = false
     @nearby_bombs = 0
     @checked = false
   end
 
-
+  def update_display
+    @display_value = 'F'
+    @display_value = '_' if @revealed
+    @display_value = @nearby_bombs if @nearby_bombs > 0
+  end
 
 
 end
